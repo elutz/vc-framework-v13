@@ -44,7 +44,7 @@ $lastMethodStamp_l:=<>VC_LastMethodStamp_l
 ARRAY TEXT($methodslastChanged_at;0)
 
 Repeat 
-$currentMethodStamp_l:=$lastMethodStamp_l-1
+$currentMethodStamp_l:=$lastMethodStamp_l
 METHOD GET PATHS(Path All objects ;$methodslastChanged_at;$currentMethodStamp_l;*)
 $lastMethodStamp_l:=$lastMethodStamp_l-1
 Until (Size of array($methodslastChanged_at)>0)
@@ -64,6 +64,12 @@ C_LONGINT($index)
 For ($index;Size of array($doclist);1;-1)
 
 GET DOCUMENT PROPERTIES($doclist{$index};$locked;$hidden;$createdOn;$createdAt;$changedOn;$changedAt)
+
+If ($doclist{$index}#"@.txt")
+// process .txt files only
+DELETE FROM ARRAY($doclist;$index)
+
+Else 
 // all files with newer timestamps then our last method time stamp
 // will be imported
 // remove older entries
@@ -75,10 +81,6 @@ Else
 If (($changedOn=$lastChangedOn) & ($changedAt<$lastChangedAt))
 DELETE FROM ARRAY($doclist;$index)
 
-Else 
-// hidden files (beginning with "." like .hgtags) must not be processed
-If (Position(".";Replace string($doclist{$index};UTIL_FILE_GetParent ($doclist{$index});""))=1)
-DELETE FROM ARRAY($doclist;$index)
 End if 
 
 End if 
@@ -86,12 +88,25 @@ End if
 
 End for 
 
+// ====== Debugging code ======
+C_TEXT($listOfMethods)
+C_LONGINT($methos_index)
+$listOfMethods:=""
+For ($methos_index;1;Size of array($doclist))
+GET DOCUMENT PROPERTIES($doclist{$methos_index};$locked;$hidden;$createdOn;$createdAt;$changedOn;$changedAt)
+$listOfMethods:=$listOfMethods+\
+Replace string(Convert path system to POSIX($doclist{$methos_index});<>VC_SourcerootPOSIX_t+"/";"")+\
+"\t"+String($changedOn)+" "+String($changedAt)+"\n"
+End for 
+
 ALERT("Import von "+String(Size of array($doclist))+" Methoden\n"+\
-"neuer als "+String($lastChangedOn)+" "+String($lastChangedAt))
+"neuer als "+$recentfile+" "+String($lastChangedOn)+" "+String($lastChangedAt)+"\n"+\
+$listOfMethods)
+// ====== End Debugging code ======
 
 PROG_Update ($progID_l;3/4)
 
-$error_l:=Choose(Size of array($doclist)>0;0;20000)
+$error_l:=Choose(Size of array($doclist)>0;0;<>ERR_IMPORT_NothingToImport_l)
 
 // And now import the code
 C_LONGINT($progIDFiles_l)
@@ -122,7 +137,8 @@ COPY BLOB($methodBody_b;$tempBody_b;3;0;BLOB size($methodBody_b)-3)
 // convert to text
 $methodBody:=Convert to text($tempBody_b;"UTF-8")
 
-$error_l:=Choose(Length($methodBody)=0;20001;0)
+$error_l:=Choose(Length($methodBody)=0;<>ERR_IMPORT_EmptyMethod_l;0)
+If ($error_l=0)
 // fix line endings
 C_TEXT($methodBody)
 $methodBody:=Replace string($methodBody;Char(Line feed );Char(Carriage return ))
@@ -140,6 +156,13 @@ $error_l:=UTIL_ERR_HandlerRemove
 
 End if 
 
+End if 
+
+If ($error_l#0)
+UTIL_ERR_ErrorMethod_t:=Current method name
+$index:=Size of array($doclist)+1// break of for-loop
+End if 
+
 End for 
 
 PROG_Update ($progID_l;1)
@@ -152,8 +175,9 @@ $error_l:=<>ERR_VC_NotEnabled_l
 UTIL_ERR_ErrorMethod_t:=Current method name
 End if 
 
+
 If ($error_l#0)
-UTIL_ERR_HandleError ($error_l;<>VC_ComponentName_t;UTIL_ERR_ErrorMethod_t)
+UTIL_ERR_HandleError ($error_l;<>VC_ComponentName_t;UTIL_ERR_ErrorMethod_t;"Error while importing")
 End if 
 
 PROG_CloseAll 

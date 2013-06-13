@@ -64,6 +64,15 @@ $errorMessage_t:="Call to VC_DEVHOOK_Create failed, method will not be saved."
 : ($errorCode_l=<>ERR_METH_DeleteHookFail_l)
 $errorMessage_t:="Call to VC_DEVHOOK_Delete failed, method will not be deleted."
 
+// *****************
+//   -20000-... - IMPORT_
+// *****************
+: ($errorCode_l=<>ERR_IMPORT_NothingToImport_l)
+$errorMessage_t:="Nothing to import, all methods are up to date."
+
+: ($errorCode_l=<>ERR_IMPORT_EmptyMethod_l)
+$errorMessage_t:="Empty method body."
+
 Else 
 $errorMessage_t:=$nullMessage_t
 End case 

@@ -77,3 +77,12 @@ C_LONGINT(<>ERR_METH_DeleteHookFail_l)
 <>ERR_METH_UpdateHookFail_l:=-18303
 <>ERR_METH_CreateHookFail_l:=-18304
 <>ERR_METH_DeleteHookFail_l:=-18305
+
+// *****************
+//   -20000-... - IMPORT_
+// *****************
+C_LONGINT(<>ERR_IMPORT_NothingToImport_l)
+C_LONGINT(<>ERR_IMPORT_EmptyMethod_l)
+
+<>ERR_IMPORT_NothingToImport_l:=-20000
+<>ERR_IMPORT_EmptyMethod_l:=-20001
