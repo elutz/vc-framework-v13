@@ -145,7 +145,7 @@ $methodBody:=Replace string($methodBody;Char(Line feed );Char(Carriage return ))
 
 // system path to method path
 C_TEXT($filePathPosix;$DOAPath_t)
-$filePathPosix:=Convert path system to POSIX($doclist{$index};*)
+$filePathPosix:=Convert path system to POSIX($doclist{$index})
 $DOAPath_t:=Replace string($filePathPosix;<>VC_SourcerootPOSIX_t+"/";"")
 $DOAPath_t:=Replace string($DOAPath_t;".txt";"")
 
