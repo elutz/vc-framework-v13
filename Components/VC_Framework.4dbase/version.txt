@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Component Version: 37283
+=======
+Component Version: 36857
+>>>>>>> 980ef35404c8212c98c2e5a0ba07da4e9c9459c6
 4D Version: 13
 
 This file represents the version number of the component.
