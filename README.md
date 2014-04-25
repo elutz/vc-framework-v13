@@ -10,17 +10,21 @@ The VC_Framework component can be extended to support revision control (RC) inte
 * VC_DEVHOOK_Update
 * VC_DEVHOOK_Delete
 
-The VC_Framework component will call thoee methods prior to saving/deleting the method. The callee can choose whether or not to allow the save as well as take any action necessary to notify the RC software of the change.
+The VC_Framework component will call these methods prior to saving/deleting the method. The callee can choose whether or not to allow the save as well as take any action necessary to notify the RC software of the change.
 
 ## Contents
 
-* The [Components](https://github.com/4D/vc-framework-v13/tree/master/Components) folder contains the "VC_Framework.4dbase" component suitable for installation in any [4D v13](http://www.4d.com/products/4dv13.html) database.
+* The [Components](https://github.com/4D/vc-framework-v13/tree/master/Components) folder contains:
+    * The "VC_Framework.4dbase" component suitable for installation in any [4D v13](http://www.4d.com/products/4dv13.html) database.
+    * The "prog.4dbase" component, which extends 4D's Progress module to include a threshold for progress bar display. 
 * The [matrix](https://github.com/4D/vc-framework-v13/tree/master/matrix) folder contains the component source code.
 
 ## Usage
 
 Install the component (do NOT install an alias, you must install the component), launch the host database in 4D, and open a method if none are open. This will launch the stored procedure to manage method export.
 
+(Optional) Install the "prog.4dbase" component. VC_Framework will not show progress bars without this component.
+
 Note: the first export may take some time in larger databases, but you only need to do this once.
 
-If you modify the matrix database, you should build a new component.  To build a new component, execute the BLD_Build method from the matrix database (the matrix database uses the ["BLD.4dbase" component](https://github.com/4D/interpreted-build)).
+If you modify the matrix database, you should build a new component.  To build a new component, execute the BLD_Build method from the matrix database (the matrix database uses the ["BLD.4dbase" component](https://github.com/4D/interpreted-build-v13)).
